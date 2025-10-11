@@ -3,10 +3,12 @@
 #include "Parser.h"
 #include "CodeGen.h"
 
+using namespace std;
 using namespace addNMult;
 
 int main() {
-  std::string input = "let x = 1 + 2";
+  std::string input;
+  cin >> input;
   Lexer lexer(input);
   Parser p(lexer);
   try {
