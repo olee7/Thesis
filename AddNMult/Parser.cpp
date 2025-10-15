@@ -25,11 +25,6 @@ namespace addNMult {
     }
 
     std::unique_ptr<Expression> Parser::parseRHS() {
-        if (is(TokenKind::Varname)) {
-            std::string v = token.stringToken;
-            next();
-            return std::make_unique<VarExpression>(std::move(v));
-        }
         return parseSumNums();
     }
 
@@ -44,20 +39,35 @@ namespace addNMult {
     }
 
     std::unique_ptr<Expression> Parser::parseProdNums() {
-        auto e = parseNumberOperand();
+        auto e = parseEval();
         while (is(TokenKind::Star)) {
             next();
-            auto r = parseNumberOperand();
+            auto r = parseEval();
             e = std::make_unique<BinaryExpression>(Op::Mul, std::move(e), std::move(r));
         }
         return e;
     }
 
-    std::unique_ptr<Expression> Parser::parseNumberOperand() {
-        if (!is(TokenKind::Number)) throw std::runtime_error("expected number");
-        auto v = token.numberValue;
-        next();
-        return std::make_unique<NumberExpression>(v);
+    std::unique_ptr<Expression> Parser::parseEval() {
+        switch (token.kind) {
+            case TokenKind::Number: {
+                auto tokenVal = token.numberValue;
+                next();
+                return std::make_unique<NumberExpression>(tokenVal);
+            }
+            case TokenKind::Varname: {
+                std::string tokenVal = token.stringToken;
+                next();
+                return std::make_unique<VarExpression>(std::move(tokenVal));
+            }
+            case TokenKind::OpenParen: {
+                next();
+                auto tokenVal = parseSumNums();
+                expect(TokenKind::CloseParen, "')'");
+                return tokenVal;
+            }
+            default:
+                throw std::runtime_error("expected a number, variable, or parenthensis.");
+        }   
     }
-
 }

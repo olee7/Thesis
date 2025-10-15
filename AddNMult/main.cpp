@@ -7,8 +7,7 @@ using namespace std;
 using namespace addNMult;
 
 int main() {
-  std::string input;
-  cin >> input;
+  std::string input = "let x = 2 * 2 + (4)";
   Lexer lexer(input);
   Parser p(lexer);
   try {

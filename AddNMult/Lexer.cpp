@@ -75,6 +75,8 @@ namespace addNMult {
         if (c == '+') return tokenizeOperator(TokenKind::Plus, 1);
         if (c == '*') return tokenizeOperator(TokenKind::Star, 1);
         if (c == '=') return tokenizeOperator(TokenKind::Eq, 1);
+        if (c == '(') return tokenizeOperator(TokenKind::OpenParen, 1);
+        if (c == ')') return tokenizeOperator(TokenKind::CloseParen, 1);
         return tokenizeOperator(TokenKind::Invalid, 1);
     }
 

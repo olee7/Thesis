@@ -52,7 +52,7 @@ namespace addNMult {
             std::unique_ptr<Expression> parseRHS();
             std::unique_ptr<Expression> parseSumNums();
             std::unique_ptr<Expression> parseProdNums();
-            std::unique_ptr<Expression> parseNumberOperand();
+            std::unique_ptr<Expression> parseEval();
     };
 
 }

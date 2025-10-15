@@ -4,7 +4,9 @@
 
 namespace addNMult {
 
-    enum class TokenKind { Eof, Let, Varname, Number, Plus, Star, Eq, Invalid };
+    enum class TokenKind { 
+        Eof, Let, Varname, Number, Plus, Star, Eq, Invalid, OpenParen, CloseParen 
+    };
 
     struct Token {
         TokenKind kind = TokenKind::Invalid;
@@ -30,5 +32,4 @@ namespace addNMult {
             Token lexIdentifierOrKeyword();
             Token lexNumber();
     };
-
 }
