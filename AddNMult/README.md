@@ -24,13 +24,18 @@ int main() {
 the program should give you the output "3".
 
 ```
-<let>      -> "let" <varname> "=" ( <varname> | <sum> )
-<sum>      -> <prod> <sum'>
-<sum'>     -> "+" <prod> <sum'> | ε
-<prod>     -> <number> <prod'>
-<prod'>    -> "*" <number> <prod'> | ε
-<varname>  -> <letter> | <varname> <letter> | <varname> <digit> | <varname> "_"
-<number>   -> <digit> | <number> <digit>
-<letter>   -> "A"…"Z" | "a"…"z"
-<digit>    -> "0"…"9"
+<program>     -> <declaration> <return> ε
+<return>      -> "return" <sum>
+<declaration> -> <declaration> <let>
+
+<let>       -> "let" <varname> "=" <sum>
+<sum>       -> <prod> <sum'>
+<sum'>      -> "+" <prod> <sum'> | ε
+<prod>      -> <eval> <prod'>
+<prod'>     -> "*" <eval> <prod'> | ε
+<eval>      -> <number> | <varname> | "(" sum ")"
+<varname>   -> <letter> | <varname> <letter> | <varname> <digit> | <varname> "_"
+<number>    -> <digit> | <number> <digit>
+<letter>    -> "A"…"Z" | "a"…"z"
+<digit>     -> "0"…"9"
 ```

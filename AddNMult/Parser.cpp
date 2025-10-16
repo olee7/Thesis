@@ -13,6 +13,23 @@ namespace addNMult {
         next();
     }
 
+    std::unique_ptr<Program> Parser::parseProgram() {
+        auto program = std::make_unique<Program>();
+
+        while (is(TokenKind::Let)) {
+            auto decl = parseLet();
+            program->decls.push_back(VarDecl{std::move(decl->name), std::move(decl->value)});
+        }
+
+        expect(TokenKind::Return, "'return'");
+        program->ret = parseRHS();
+
+        if (!is(TokenKind::Eof)) {
+            throw std::runtime_error("unintended token");
+        }
+        return program;
+    }
+
     std::unique_ptr<VarDecl> Parser::parseLet() {
         expect(TokenKind::Let, "'let'");
         if (!is(TokenKind::Varname)) throw std::runtime_error("expected identifier");
@@ -20,7 +37,6 @@ namespace addNMult {
         next();
         expect(TokenKind::Eq, "'='");
         auto valueExpr = parseRHS();
-        if (!is(TokenKind::Eof)) throw std::runtime_error("unexpected tokens after RHS");
         return std::make_unique<VarDecl>(VarDecl{std::move(name), std::move(valueExpr)});
     }
 

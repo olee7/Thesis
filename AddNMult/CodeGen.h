@@ -13,7 +13,7 @@ class CodeGen {
     public:
         explicit CodeGen(std::string moduleName = "addNMult");
         llvm::Module* module() const { return mod.get(); }
-        llvm::Function* emit(const VarDecl& decl);
+        llvm::Function* emit(const Program& program);
 
     private:
         llvm::LLVMContext ctx;
@@ -26,5 +26,4 @@ class CodeGen {
         llvm::Value* codegenVar(const VarExpression* e);
         llvm::Value* codegenBinary(const BinaryExpression* e);
     };
-
 }

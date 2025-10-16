@@ -42,25 +42,32 @@ Value* CodeGen::codegenBinary(const BinaryExpression* e) {
     return nullptr;
 }
 
-llvm::Function* CodeGen::emit(const VarDecl& decl) {
-    auto* fnTy = llvm::FunctionType::get(i64Ty(ctx), false);
-    auto* fn = llvm::Function::Create(fnTy, llvm::Function::ExternalLinkage, "addNMult", mod.get());
-    auto* entry = llvm::BasicBlock::Create(ctx, "entry", fn);
-    builder->SetInsertPoint(entry);
+llvm::Function* CodeGen::emit(const Program& program) {
+    auto* functionType = llvm::FunctionType::get(i64Ty(ctx), false);
+    auto* function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, "addNMult", mod.get());
+    auto* entryBlock = llvm::BasicBlock::Create(ctx, "entry", function);
+    builder->SetInsertPoint(entryBlock);
 
-    auto* slot = builder->CreateAlloca(i64Ty(ctx), nullptr, decl.name);
-    named[decl.name] = slot;
+    // Because now we can have multiple let declarations.
+    // Declaration is one <let>.
+    for (const auto& declaration : program.decls) {
+        auto* variableSlot = builder->CreateAlloca(i64Ty(ctx), nullptr, declaration.name);
+        named[declaration.name] = variableSlot;
+        llvm::Value* initializerValue = codegen(declaration.value.get());
+        if (!initializerValue) { 
+            function->eraseFromParent(); 
+            return nullptr; 
+        }
+        builder->CreateStore(initializerValue, variableSlot);
+    }
 
-    // Begin depth first, left to right, tree traversal.
-    llvm::Value* val = codegen(decl.value.get());
-    if (!val) { fn->eraseFromParent(); return nullptr; }
+    llvm::Value* returnValue = codegen(program.ret.get());
+    if (!returnValue) { function->eraseFromParent(); return nullptr; }
+    builder->CreateRet(returnValue);
 
-    builder->CreateStore(val, slot);
-    builder->CreateRet(val);
-
-    if (llvm::verifyFunction(*fn, &llvm::errs())) {
-        fn->eraseFromParent();
+    if (llvm::verifyFunction(*function, &llvm::errs())) {
+        function->eraseFromParent();
         return nullptr;
     }
-    return fn;
+    return function;
 }

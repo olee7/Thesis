@@ -3,6 +3,8 @@
 #include <string>
 #include <stdexcept>
 #include <ostream>
+#include <vector>
+#include <cstdint>    
 #include "Lexer.h"
 
 namespace addNMult {
@@ -36,9 +38,15 @@ namespace addNMult {
         std::unique_ptr<Expression> value;
     };
 
+    struct Program {
+        std::vector<VarDecl> decls; // Vector of <sum> in: <let> -> "let" <varname> "=" <sum>
+        std::unique_ptr<Expression> ret;
+    };
+
     class Parser {
         public:
             explicit Parser(Lexer& lx);
+            std::unique_ptr<Program> parseProgram();
             std::unique_ptr<VarDecl> parseLet();
 
         private:

@@ -53,6 +53,9 @@ namespace addNMult {
         if (s == "let") { 
             return tokenize(TokenKind::Let, start, s.size());
         }
+        if (s == "return") {
+            return tokenize(TokenKind::Return, start, s.size());
+        }
         Token t;
         t.kind = TokenKind::Varname;
         t.stringToken = s;
@@ -69,15 +72,18 @@ namespace addNMult {
     Token Lexer::next() {
         skipWhitespace();
         if (i >= n) return tokenize(TokenKind::Eof, i, 0);
-        char c = src[i];
-        if (isLetter(c)) return lexIdentifierOrKeyword();
-        if (isDigit(c)) return lexNumber();
-        if (c == '+') return tokenizeOperator(TokenKind::Plus, 1);
-        if (c == '*') return tokenizeOperator(TokenKind::Star, 1);
-        if (c == '=') return tokenizeOperator(TokenKind::Eq, 1);
-        if (c == '(') return tokenizeOperator(TokenKind::OpenParen, 1);
-        if (c == ')') return tokenizeOperator(TokenKind::CloseParen, 1);
-        return tokenizeOperator(TokenKind::Invalid, 1);
-    }
 
+        unsigned char c = static_cast<unsigned char>(src[i]);
+        if (isLetter(c)) return lexIdentifierOrKeyword();
+        if (isDigit(c))  return lexNumber();
+
+        switch (c) {
+            case '+': return tokenizeOperator(TokenKind::Plus, 1);
+            case '*': return tokenizeOperator(TokenKind::Star, 1);
+            case '=': return tokenizeOperator(TokenKind::Eq, 1);
+            case '(': return tokenizeOperator(TokenKind::OpenParen, 1);
+            case ')': return tokenizeOperator(TokenKind::CloseParen, 1);
+            default:  return tokenizeOperator(TokenKind::Invalid, 1);
+        }
+    }
 }
