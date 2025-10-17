@@ -39,7 +39,7 @@ namespace addNMult {
     };
 
     struct Program {
-        std::vector<VarDecl> decls; // Vector of <sum> in: <let> -> "let" <varname> "=" <sum>
+        std::vector<VarDecl> decls;
         std::unique_ptr<Expression> ret;
     };
 
